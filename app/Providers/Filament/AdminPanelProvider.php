@@ -22,6 +22,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Filament\Resources\CategoryNilaiResource;
 use App\Filament\Resources\ClassroomHasSubjectResource;
 use App\Filament\Resources\ClassroomResource;
@@ -82,6 +83,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             //->tenant(Team::class)
+            //->tenantRegistration(RegisterTeam::class)
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
                     NavigationGroup::make()
@@ -145,8 +147,8 @@ class AdminPanelProvider extends PanelProvider
             Filament::registerUserMenuItems([
                 UserMenuItem::make()
                 ->label('settings')
-                ->url(PeriodeResource::getUrl())
-                ->icon('heroicon-s-cog'),
+                //->url(PeriodeResource::getUrl())
+               ->icon('heroicon-s-cog'),
             ]);
         });
     }

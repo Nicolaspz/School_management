@@ -1,57 +1,34 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Student\Resources;
 
-use App\Filament\Resources\NotaResource\Pages;
-use App\Filament\Resources\NotaResource\RelationManagers;
-use App\Models\CategoryNilai;
+use App\Filament\Student\Resources\NotaResource\Pages;
+use App\Filament\Student\Resources\NotaResource\RelationManagers;
 use App\Models\Classroom;
 use App\Models\Nota;
-use App\Models\Periode;
-use App\Models\Student;
-use App\Models\Subject;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class NotaResource extends Resource
 {
     protected static ?string $model = Nota::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Card::make()
-                ->schema([
-                    Select::make('class_id')
-                ->options(Classroom::all()->pluck('name','id'))
-                ->label('Class'),
-                Select::make('periode_id')
-                ->searchable()
-                ->options(Periode::all()->pluck('name','id'))
-                ->label('Periodo'),
-                Select::make('subject_id')
-                ->options(Subject::all()->pluck('name','id'))
-                ->label('Discipplina'),
-                Select::make('category_notas_id')
-                ->options(CategoryNilai::all()->pluck('name','id'))
-                ->label('categoria da nota'),
-                Select::make('student_id')
-                ->options(Student::all()->pluck('name','id'))
-                ->label('Estudante'),
-                TextInput::make('nota')
-                ])->columns(3)
+                //
             ]);
     }
 
@@ -59,8 +36,6 @@ class NotaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('student.name')
-                ->label('Estudante'),
                 TextColumn::make('subject.name')
                 ->label('Disciplina'),
                 TextColumn::make('category_nilai.name')
@@ -71,14 +46,19 @@ class NotaResource extends Resource
                 ->label('Ano Lectivo')
             ])
             ->filters([
-                //
+                SelectFilter::make('class_id')
+                ->options(
+                    Classroom::whereHas('students', function($query){
+                        $query->where('user_id', Auth::user()->id);
+                    })->groupBy('name', 'id')->pluck('name','id')
+                )
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -97,5 +77,11 @@ class NotaResource extends Resource
             'create' => Pages\CreateNota::route('/create'),
             'edit' => Pages\EditNota::route('/{record}/edit'),
         ];
+    }
+    public static function getEloquentQuery(): Builder
+    {
+     return parent::getEloquentQuery()->whereHas('student.user',function($query){
+        $query->where('id', Auth::user()->id);
+     });
     }
 }

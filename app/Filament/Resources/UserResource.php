@@ -26,6 +26,14 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-user';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        if(auth()->user()->can('role-permission'))
+        return true;
+        else
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

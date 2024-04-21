@@ -37,9 +37,17 @@ class StudentsResource extends Resource
 {
     protected static ?string $model = Student::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Estudante';
     protected static ?string $navigationGroup = 'Académico';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if(auth()->user()->can('role-permission'))
+        return true;
+        else
+        return false;
+    }
 
 
     public static function form(Form $form): Form

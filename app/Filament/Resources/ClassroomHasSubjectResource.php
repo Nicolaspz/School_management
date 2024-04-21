@@ -22,8 +22,16 @@ class ClassroomHasSubjectResource extends Resource
 {
     protected static ?string $model = ClassroomHasSubject::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationLabel = 'Turmas-Disciplinas';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        if(auth()->user()->can('role-permission'))
+        return true;
+        else
+        return false;
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -33,8 +41,7 @@ class ClassroomHasSubjectResource extends Resource
             ->label('Class'),
         Select::make('subject_id')
             ->options(Subject::all()->pluck('name', 'id'))
-            ->multiple()
-            ->label('Disciplina')
+           ->label('Disciplina')
     ]);
     }
 

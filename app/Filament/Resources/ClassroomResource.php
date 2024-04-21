@@ -15,22 +15,25 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClassroomResource extends Resource
 {
     protected static ?string $model = Classroom::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static ?string $navigationLabel = 'Turma';
     protected static ?string $navigationGroup = 'Académico';
+
     public static function shouldRegisterNavigation(): bool
     {
         if(auth()->user()->can('classroom'))
         return true;
-    else
-    return false;
+        else
+        return false;
     }
+
 
     public static function form(Form $form): Form
     {

@@ -24,9 +24,17 @@ class StudentHasClassesResource extends Resource
 {
     protected static ?string $model = StudentHasClasses::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Estudantes e Sala';
+    protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
+    protected static ?string $navigationLabel = 'Turmas-Estudantes';
     protected static ?string $navigationGroup = 'Académico';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if(auth()->user()->can('role-permission'))
+        return true;
+        else
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

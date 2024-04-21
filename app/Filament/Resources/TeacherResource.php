@@ -18,14 +18,17 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherResource extends Resource
 {
     protected static ?string $model = Teacher::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Professor';
     protected static ?string $navigationGroup = 'Académico';
+
+
 
 
     public static function form(Form $form): Form
@@ -83,4 +86,17 @@ class TeacherResource extends Resource
             'edit' => Pages\EditTeacher::route('/{record}/edit'),
         ];
     }
+    public static function getEloquentQuery(): Builder
+{
+    $user = Auth::user();
+    $roles=$user->getRoleNames();
+
+    if($roles->contains('professor')){
+        return parent::getEloquentQuery()->where('user_id', $user->id);
+
+    } else {
+        // Comportamento padrão, retornar todos os professores ou algum outro filtro apropriado
+        return parent::getEloquentQuery();
+    }
+}
 }

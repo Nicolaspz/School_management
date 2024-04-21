@@ -19,9 +19,17 @@ class PeriodeResource extends Resource
 {
     protected static ?string $model = Periode::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Periodo';//nome do menu
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+    protected static ?string $navigationLabel = 'Ano Lectivo';//nome do menu
     protected static ?string $navigationGroup = 'Setting';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if(auth()->user()->can('role-permission'))
+        return true;
+        else
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
