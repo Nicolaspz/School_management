@@ -16,7 +16,9 @@ class classroomHasSubject extends Model
     public function subjects(){
         return $this->belongsTo(Subject::class, 'subject_id', 'id');
     }
-
+    public function teachers(){
+        return $this->belongsTo(Teacher::class, 'teachers_id', 'id');
+    }
     public function class(){
         return $this->belongsTo(Classroom::class,'classroom_id', 'id');
     }

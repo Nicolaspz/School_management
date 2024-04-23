@@ -41,13 +41,13 @@ class StudentsResource extends Resource
     protected static ?string $navigationLabel = 'Estudante';
     protected static ?string $navigationGroup = 'Académico';
 
-    public static function shouldRegisterNavigation(): bool
+   /* public static function shouldRegisterNavigation(): bool
     {
         if(auth()->user()->can('role-permission'))
         return true;
         else
         return false;
-    }
+    }*/
 
 
     public static function form(Form $form): Form

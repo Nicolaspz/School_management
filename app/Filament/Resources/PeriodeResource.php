@@ -23,14 +23,14 @@ class PeriodeResource extends Resource
     protected static ?string $navigationLabel = 'Ano Lectivo';//nome do menu
     protected static ?string $navigationGroup = 'Setting';
 
-    public static function shouldRegisterNavigation(): bool
+   /* public static function shouldRegisterNavigation(): bool
     {
         if(auth()->user()->can('role-permission'))
         return true;
         else
         return false;
     }
-
+*/
     public static function form(Form $form): Form
     {
         return $form

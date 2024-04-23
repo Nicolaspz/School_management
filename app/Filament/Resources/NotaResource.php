@@ -18,8 +18,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NotaResource extends Resource
@@ -71,7 +73,12 @@ class NotaResource extends Resource
                 ->label('Ano Lectivo')
             ])
             ->filters([
-                //
+                SelectFilter::make('class_id')
+                ->options(
+                    Classroom::whereHas('students', function($query){
+                        $query->where('user_id', Auth::user()->id);
+                    })->groupBy('name', 'id')->pluck('name','id')
+                )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -98,4 +105,28 @@ class NotaResource extends Resource
             'edit' => Pages\EditNota::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    // Verifica o role do usuário
+    $user = Auth::user();
+    if ($user->hasRole('estudante')) {
+        // Se o usuário é um estudante, filtra para mostrar apenas as notas dele
+        $query->whereHas('student.user', function ($q) use ($user) {
+            $q->where('id', $user->id);
+        });
+    } elseif ($user->hasRole('professor')) {
+        $teacherId = $user->teacher->user_id;
+        //git statusdd($teacherId);
+        $query->where('teacher_id', $teacherId);
+    }
+    elseif ($user->hasRole('super_admin')){
+
+    }
+
+
+    return $query;
+}
 }

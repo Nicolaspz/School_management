@@ -2,21 +2,20 @@
 
 namespace App\Policies;
 
-use App\Models\Classroom;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Classroom;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ClassroomPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        if($user->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('view_any_classroom');
     }
 
     /**
@@ -24,10 +23,7 @@ class ClassroomPolicy
      */
     public function view(User $user, Classroom $classroom): bool
     {
-        if(auth()->user()->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('view_classroom');
     }
 
     /**
@@ -35,10 +31,7 @@ class ClassroomPolicy
      */
     public function create(User $user): bool
     {
-        if(auth()->user()->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('create_classroom');
     }
 
     /**
@@ -46,10 +39,7 @@ class ClassroomPolicy
      */
     public function update(User $user, Classroom $classroom): bool
     {
-        if(auth()->user()->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('update_classroom');
     }
 
     /**
@@ -57,31 +47,62 @@ class ClassroomPolicy
      */
     public function delete(User $user, Classroom $classroom): bool
     {
-        if(auth()->user()->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('delete_classroom');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Classroom $classroom): bool
+    public function deleteAny(User $user): bool
     {
-        if(auth()->user()->can('classroom'))
-            return true;
-        else
-            return false;
+        return $user->can('delete_any_classroom');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Classroom $classroom): bool
     {
-        if(auth()->user()->can('classroom'))
-        return true;
-    else
-        return false;
+        return $user->can('force_delete_classroom');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_classroom');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Classroom $classroom): bool
+    {
+        return $user->can('restore_classroom');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_classroom');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Classroom $classroom): bool
+    {
+        return $user->can('replicate_classroom');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_classroom');
     }
 }

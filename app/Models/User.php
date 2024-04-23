@@ -18,9 +18,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable //implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -54,13 +54,17 @@ class User extends Authenticatable implements FilamentUser
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
 
-    public function role()
+    /*  public function role()
     {
         return $this->belongsToMany(Role::class, 'model_has_roles','model_id','role_id');
     }
 
-    /*public function teams(): BelongsToMany
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
     }
@@ -79,7 +83,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Team::class);
     }*/
 
-    public function canAccessPanel(Panel $panel): bool
+   /* public function canAccessPanel(Panel $panel): bool
     {
         $user= Auth::user();
         $roles=$user->getRoleNames();
@@ -94,6 +98,6 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-    }
+    }*/
 
 }

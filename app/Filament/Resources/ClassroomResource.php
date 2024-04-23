@@ -6,6 +6,7 @@ use App\Filament\Resources\ClassroomResource\Pages;
 use App\Filament\Resources\ClassroomResource\RelationManagers;
 use App\Filament\Resources\ClassroomResource\RelationManagers\SubjectRelationManager;
 use App\Models\Classroom;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClassroomResource extends Resource
+class ClassroomResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Classroom::class;
 
@@ -26,14 +27,18 @@ class ClassroomResource extends Resource
     protected static ?string $navigationLabel = 'Turma';
     protected static ?string $navigationGroup = 'Académico';
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        if(auth()->user()->can('classroom'))
-        return true;
-        else
-        return false;
-    }
 
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+
+        ];
+    }
 
     public static function form(Form $form): Form
     {

@@ -37,6 +37,7 @@ use App\Models\Periode;
 use App\Models\StudentHasClasses;
 use App\Models\Teacher;
 use App\Models\Team;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
@@ -81,10 +82,34 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
+            /*->plugin([
+                //FilamentSpatieRolesPermissionsPlugin::make()
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+            ])*/
+                //FilamentSpatieRolesPermissionsPlugin::make())
             //->tenant(Team::class)
             //->tenantRegistration(RegisterTeam::class)
-            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            ->plugins([
+                 //FilamentSpatieRolesPermissionsPlugin::make()
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
+            ])
+      /*      ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
                     NavigationGroup::make()
                     ->items([
@@ -137,7 +162,7 @@ class AdminPanelProvider extends PanelProvider
 
                         ]),
                 ]);
-            })
+            })*/
             ->databaseNotifications();
     }
 
