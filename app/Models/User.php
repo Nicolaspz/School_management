@@ -59,6 +59,11 @@ class User extends Authenticatable //implements FilamentUser
         return $this->hasOne(Teacher::class);
     }
 
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
     /*  public function role()
     {
         return $this->belongsToMany(Role::class, 'model_has_roles','model_id','role_id');

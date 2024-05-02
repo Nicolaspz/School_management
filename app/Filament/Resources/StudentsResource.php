@@ -81,6 +81,7 @@ class StudentsResource extends Resource
                 TextInput::make('contact')
                     ->label('Contacto'),
                 FileUpload::make('profile')
+                ->required()
                 ->disk('public')
                 ->directory('studants')
                 ])

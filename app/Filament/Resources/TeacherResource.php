@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TeacherResource\Pages;
 use App\Filament\Resources\TeacherResource\RelationManagers;
+use App\Filament\Resources\TeacherResource\RelationManagers\ClassDisciplinaRelationManager;
+use App\Filament\Resources\TeacherResource\RelationManagers\GradeRelationManager;
 use App\Models\Teacher;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -37,7 +39,7 @@ class TeacherResource extends Resource
             ->schema([
                 Card::make()
                 ->schema([
-                    TextInput::make('nip'),
+                TextInput::make('nip'),
                 TextInput::make('name'),
                 Textarea::make('address'),
                 FileUpload::make('profile')
@@ -74,7 +76,7 @@ class TeacherResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+        //ClassDisciplinaRelationManager::class
         ];
     }
 

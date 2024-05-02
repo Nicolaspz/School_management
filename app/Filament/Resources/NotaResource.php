@@ -38,7 +38,7 @@ class NotaResource extends Resource
                 ->schema([
                     Select::make('class_id')
                 ->options(Classroom::all()->pluck('name','id'))
-                ->label('Class'),
+                ->label('Turma'),
                 Select::make('periode_id')
                 ->searchable()
                 ->options(Periode::all()->pluck('name','id'))
@@ -65,12 +65,16 @@ class NotaResource extends Resource
                 ->label('Estudante'),
                 TextColumn::make('subject.name')
                 ->label('Disciplina'),
-                TextColumn::make('category_nilai.name')
-                ->label('Categoria'),
-                TextColumn::make('nota')
-                ->label('Nota'),
-                TextColumn::make('periode.name')
-                ->label('Ano Lectivo')
+                TextColumn::make('p1')
+                ->label('P1'),
+                TextColumn::make('p2')
+                ->label('P2'),
+                TextColumn::make('mac')
+                ->label('MAC'),
+                TextColumn::make('mt')
+                ->label('MT'),
+                /*TextColumn::make('periode.name')
+                ->label('Ano Lectivo')*/
             ])
             ->filters([
                 SelectFilter::make('class_id')

@@ -6,10 +6,14 @@ use App\Filament\Resources\ClassroomResource\Pages;
 use App\Filament\Resources\ClassroomResource\RelationManagers;
 use App\Filament\Resources\ClassroomResource\RelationManagers\SubjectRelationManager;
 use App\Models\Classroom;
+use App\Models\Curso;
+use App\Models\grade;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -48,6 +52,19 @@ class ClassroomResource extends Resource implements HasShieldPermissions
                 ->live()
                 ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
                 TextInput::make('slug'),
+                Select::make('cursos_id')
+                    ->searchable()
+                   ->options(fn () =>Curso::all()->pluck('name','id'))
+                    ->label('Curso')
+                    ->live()
+                    ->required(),
+                    Select::make('grade_id')
+                    ->searchable()
+                   ->options(fn (Get $get) =>grade::where('cursos_id',$get('cursos_id'))->pluck('name','id'))
+                    ->label('Class')
+                    ->live()
+                    ->required(),
+
 
             ]);
     }
@@ -58,6 +75,9 @@ class ClassroomResource extends Resource implements HasShieldPermissions
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('slug'),
+                TextColumn::make('grade.name')
+                ->label('class'),
+                TextColumn::make('curso.name'),
             ])
             ->filters([
                 //

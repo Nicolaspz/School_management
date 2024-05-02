@@ -24,6 +24,10 @@ class Nota extends Model
     {
     return $this->belongsTo(Periode::class, 'periode_id','id');
     }
+    public function Term(): BelongsTo
+    {
+    return $this->belongsTo(Term::class, 'terms_id','id');
+    }
     public function subject(): BelongsTo
     {
     return $this->belongsTo(Subject::class ,'subject_id','id');

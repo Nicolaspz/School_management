@@ -43,23 +43,23 @@ class SubjectRelationManager extends RelationManager
             ])
             ->headerActions([
                 //Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
+               /* Tables\Actions\AttachAction::make()
                 ->recordSelect(
                     fn (Select $select)=> $select->placeholder('Selecione a Disciplina')
                  )
                  ->form(fn (AttachAction $action): array =>[
                      $action->getRecordSelect(),
                      TextInput::make('description')->required(),
-                 ]),
+                 ]),*/
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                   // DetachBulkAction::make(),
                 ])
             ])
             ->actions([
                 //Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                //Tables\Actions\DetachAction::make(),
                 //Tables\Actions\DeleteAction::make(),
             ]);
 
