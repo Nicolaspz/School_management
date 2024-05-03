@@ -14,6 +14,7 @@ use App\Models\Periode;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Term;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Repeater;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
@@ -174,6 +176,20 @@ class CreateNota extends CreateRecord
                 'p2'=> $row['p2'],
                 'mac'=>$row['mac'],
             ]);
+
+            if ($row['p1'] < 10 ) {
+                $studentUserId = Student::where('id', $row['student'])->value('user_id');
+                $studentUser = User::find($studentUserId);
+
+                if ($studentUser) {
+                    $notification = Notification::make()
+                        ->title('Nota Baixa')
+                        ->success()
+                        ->body('Sua nota está abaixo de 10.')
+                        ->sendToDatabase($studentUser)
+                        ->send();
+                }
+            }
 
         }
 
