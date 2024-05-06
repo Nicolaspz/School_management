@@ -46,8 +46,11 @@ class CreateNota extends CreateRecord
                         $teacherId = $user->teacher->id;
                         $gradeIds = ClassDisciplina::where('teachers_id', $teacherId)
                         ->pluck('grade_id');
-                    $curso= Classroom::whereIn('grade_id', $gradeIds)
+                        $grade=$gradeIds[0];
+                        //dd($grade);
+                    $curso= Classroom::whereIn('grade_id',$gradeIds)
                         ->pluck('cursos_id');
+                        //dd($curso);
                         return Curso::whereIn('id', $curso)
                         ->pluck('name', 'id');
 

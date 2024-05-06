@@ -77,12 +77,12 @@ class NotaResource extends Resource
                 ->label('Ano Lectivo')*/
             ])
             ->filters([
-                SelectFilter::make('class_id')
+               /* SelectFilter::make('class_id')
                 ->options(
                     Classroom::whereHas('students', function($query){
                         $query->where('user_id', Auth::user()->id);
                     })->groupBy('name', 'id')->pluck('name','id')
-                )
+                )*/
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

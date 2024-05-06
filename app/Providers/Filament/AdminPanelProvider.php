@@ -170,7 +170,7 @@ class AdminPanelProvider extends PanelProvider
         Filament::serving(function(){
             Filament::registerUserMenuItems([
                 UserMenuItem::make()
-                ->label('settings')
+                ->label('Perfil')
                 //->url(PeriodeResource::getUrl())
                ->icon('heroicon-s-cog'),
             ]);

@@ -13,7 +13,10 @@ class  grade extends Model
     public function subject(){
         return $this->belongsToMany(Subject::class);
     }
+
     public function curso(){
         return $this->belongsTo(Curso::class, 'cursos_id', 'id');
     }
+
+
 }

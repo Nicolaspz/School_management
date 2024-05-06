@@ -3,23 +3,16 @@
 namespace App\Filament\Resources\ClassroomResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SubjectRelationManager extends RelationManager
+class StudentRelationManager extends RelationManager
 {
-    protected static string $relationship = 'Subject';
+    protected static string $relationship = 'Student';
 
     public function form(Form $form): Form
     {
@@ -43,25 +36,15 @@ class SubjectRelationManager extends RelationManager
             ])
             ->headerActions([
                 //Tables\Actions\CreateAction::make(),
-               /* Tables\Actions\AttachAction::make()
-                ->recordSelect(
-                    fn (Select $select)=> $select->placeholder('Selecione a Disciplina')
-                 )
-                 ->form(fn (AttachAction $action): array =>[
-                     $action->getRecordSelect(),
-                     TextInput::make('description')->required(),
-                 ]),*/
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                   // DetachBulkAction::make(),
-                ])
             ])
             ->actions([
                 //Tables\Actions\EditAction::make(),
-                //Tables\Actions\DetachAction::make(),
                 //Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
-
     }
 }

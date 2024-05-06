@@ -16,14 +16,14 @@ class Classroom extends Model
     public function subject(){
         return $this->belongsToMany(Subject::class)->withPivot('description');
     }
-    public function students():BelongsToMany
+    public function Student():BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'student_has_classes', 'classrooms_id',
                 'students_id');
     }
     public function grade():BelongsTo
     {
-        return $this->belongsTo(grade::class, 'grades_id', 'id');
+        return $this->belongsTo(grade::class, 'grade_id', 'id');
     }
     public function curso():BelongsTo
     {

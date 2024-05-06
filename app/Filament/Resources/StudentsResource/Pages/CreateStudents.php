@@ -29,12 +29,9 @@ class CreateStudents extends CreateRecord
 
                 Card::make("Dados de Acesso")
                 ->schema([
-                    TextInput::make('name')
-                    ->required(),
-
                     TextInput::make('email')
                     ->email()->required(),
-                    TextInput::make('password')
+                    /*TextInput::make('password')
                     ->password()
                     ->dehydrateStateUsing(fn (string $state): string=> Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
@@ -45,20 +42,17 @@ class CreateStudents extends CreateRecord
 
                 Card::make("Dados Pessoais")
                 ->schema([
-
                 TextInput::make('name')
                 ->label('Nome do Estudante')
-                ->required()
-                ,
+                ->required(),
                 Select::make('gender')
                 ->options([
                     "Male",
-                     "Female"
-
-                ])->required()
-                ,
+                     "Female"])->required()
+                ->hidden(),
                 DatePicker::make('birthday')
                 ->label('Aniversario'),
+
                 Select::make('religion')
                 ->options([
                     "Islam",
@@ -69,11 +63,13 @@ class CreateStudents extends CreateRecord
                       "Khonghucu"
                 ])
               ->required()
+              ->hidden()
               ,
                 TextInput::make('contact')
-                    ->label('Contacto'),
+                    ->label('Contacto')
+                    ->hidden(),
                 FileUpload::make('profile')
-                ->required()
+
                 ->disk('public')
                 ->directory('studants')
                 ])->columns(2)
@@ -94,11 +90,11 @@ class CreateStudents extends CreateRecord
             $latestStudentId=0;
         }
         $nis=$latestStudentId + 1;
-
+            $pass="12345678";
         $user = User::create([
             'name' => $get['name'],
             'email' => $get['email'],
-            'password' => Hash::make($get['password']),
+            'password' => Hash::make($pass),
         ]);
 
 
@@ -108,13 +104,14 @@ class CreateStudents extends CreateRecord
                 'user_id' => $user->id,
                 'nis' => $nis,
                 'name' => $get['name'],
-                'gender' => $get['gender'],
+                //'gender' => $get['gender'],
                 'birthday' => $get['birthday'],
-                'religion' => $get['religion'],
-                'contact' => $get['contact'],
+                //'religion' => $get['religion'],
+                //'contact' => $get['contact'],
                 'profile' => $get['profile'],
                 // Outros campos de dados pessoais do estudante
             ]);
+            $user->assignRole('estudante');
 
             // Verifica se o aluno foi salvo corretamente
             if ($student) {

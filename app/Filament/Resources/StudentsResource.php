@@ -95,13 +95,12 @@ class StudentsResource extends Resource
                 TextColumn::make('nis')
                     ->label('NIS'),
                 TextColumn::make('name'),
-                TextColumn::make('gender'),
+                //TextColumn::make('gender'),
                 TextColumn::make('birthday')
                 ->label('Aniversario'),
-                TextColumn::make('religion'),
+                //TextColumn::make('religion'),
 
-                TextColumn::make('contact')
-                    ->label('Contacto'),
+                //TextColumn::make('contact')->label('Contacto'),
                 ImageColumn::make('profile'),
                 TextColumn::make('status')
                 ->formatStateUsing(fn (string $state): string => ucwords("$state"))

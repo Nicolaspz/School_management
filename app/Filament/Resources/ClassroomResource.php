@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClassroomResource\Pages;
 use App\Filament\Resources\ClassroomResource\RelationManagers;
+use App\Filament\Resources\ClassroomResource\RelationManagers\StudentRelationManager;
 use App\Filament\Resources\ClassroomResource\RelationManagers\SubjectRelationManager;
 use App\Models\Classroom;
 use App\Models\Curso;
@@ -64,9 +65,7 @@ class ClassroomResource extends Resource implements HasShieldPermissions
                     ->label('Class')
                     ->live()
                     ->required(),
-
-
-            ]);
+                    ]);
     }
 
     public static function table(Table $table): Table
@@ -80,7 +79,7 @@ class ClassroomResource extends Resource implements HasShieldPermissions
                 TextColumn::make('curso.name'),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -95,7 +94,7 @@ class ClassroomResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            SubjectRelationManager::class
+            StudentRelationManager::class
         ];
     }
 

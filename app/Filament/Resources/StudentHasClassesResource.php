@@ -65,7 +65,7 @@ class StudentHasClassesResource extends Resource
                 TextColumn::make('students.name')
                 ->label('nome do estudante'),
                 TextColumn::make('classrooms.name')
-                ->label('Sala'),
+                ->label('Turma'),
                 TextColumn::make('periodes.name')
                 ->label('Periodo')
 

@@ -5,12 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ClassDisciplinaResource\Pages;
 use App\Filament\Resources\ClassDisciplinaResource\RelationManagers;
 use App\Models\ClassDisciplina;
+use App\Models\Curso;
 use App\Models\grade;
 use App\Models\Subject;
 use App\Models\Teacher;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -27,9 +30,22 @@ class ClassDisciplinaResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Select::make('grade_id') // Alterado de 'class' para 'classroom_id'
-            ->options(grade::all()->pluck('name', 'id'))
+            ->schema(fn (Get $get): array =>[
+                /*Select::make('curso')
+                ->options(Curso::pluck('name', 'id'))
+                ->label('Curso')
+                ->required()
+                ->live()
+                ->afterStateUpdated(function (Set $set){
+                    $set('student', null);
+                    $set('periode', null);
+                    $set('subject_id', null);
+                    $set('grade_id', null);
+
+                }),*/
+               // dd($get('curso')),
+             Select::make('grade_id') // Alterado de 'class' para 'classroom_id'
+            ->options(grade::pluck('name','id'))
             ->label('Class'),
             Select::make('teachers_id') // Alterado de 'class' para 'classroom_id'
             ->options(Teacher::all()->pluck('name', 'id'))
