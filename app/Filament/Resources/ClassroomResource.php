@@ -72,11 +72,13 @@ class ClassroomResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                ->searchable(),
                 TextColumn::make('slug'),
                 TextColumn::make('grade.name')
-                ->label('class'),
-                TextColumn::make('curso.name'),
+                ->label('class')
+                ->searchable(),
+                TextColumn::make('curso.name')->searchable(),
             ])
             ->filters([
 

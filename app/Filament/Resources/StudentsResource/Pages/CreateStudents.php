@@ -3,7 +3,12 @@
 namespace App\Filament\Resources\StudentsResource\Pages;
 
 use App\Filament\Resources\StudentsResource;
+use App\Models\Classroom;
+use App\Models\Curso;
+use App\Models\grade;
+use App\Models\Periode;
 use App\Models\Student;
+use App\Models\StudentHasClasses;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Components\Card;
@@ -12,6 +17,8 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\DB;
@@ -72,8 +79,48 @@ class CreateStudents extends CreateRecord
 
                 ->disk('public')
                 ->directory('studants')
+                ])->columns(2),
+
+
+                Card::make("Dados Académicos")
+                ->schema(fn (Get $get): array =>[
+                    Select::make('curso')
+                    ->options(Curso::all()->pluck('name','id'))
+                    ->label('Curso')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set){
+                        $set('student', null);
+                        $set('periode', null);
+                        $set('subject_id', null);
+                        $set('grade', null);
+
+                    }),
+                    Select::make('grade')
+                    ->options(grade::where('cursos_id',$get('curso'))->pluck('name','id'))
+                    ->label('classe')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set){
+                        $set('classrooms', null);
+                     }),
+
+                    Select::make('classrooms')
+                    ->options(Classroom::where('grade_id',$get('grade'))->pluck('name','id'))
+                    ->label('Turma')
+                    ->required()
+                    ->live(),
+                    Select::make('periode')
+                        ->searchable()
+                        ->options(Periode::all()->pluck('name','id'))
+                        ->label('Ano Lectivo')
+                        ->live()
+                        ->required()
+                        ->preload(),
+
                 ])->columns(2)
             ]);
+
     }
 
     public function save(){
@@ -115,8 +162,11 @@ class CreateStudents extends CreateRecord
 
             // Verifica se o aluno foi salvo corretamente
             if ($student) {
-                // Commit na transação se tudo estiver OK
-                DB::commit();
+               StudentHasClasses::create([
+               'students_id'=> $student->id,
+                'classrooms_id'=>$get['classrooms'],
+                'periodes_id'=>$get['periode'],
+                 ]);
             } else {
                 // Se o aluno não foi salvo corretamente, reverta a transação
                 DB::rollback();

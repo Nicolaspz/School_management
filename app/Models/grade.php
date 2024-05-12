@@ -11,12 +11,13 @@ class  grade extends Model
     protected $guarded = [];
 
     public function subject(){
-        return $this->belongsToMany(Subject::class);
+        return $this->belongsToMany(Subject::class,'grade_subject', 'subject_id', 'grade_id');
     }
 
     public function curso(){
         return $this->belongsTo(Curso::class, 'cursos_id', 'id');
     }
+
 
 
 }

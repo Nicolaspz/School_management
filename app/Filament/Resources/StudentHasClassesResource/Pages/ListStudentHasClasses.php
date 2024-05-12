@@ -5,9 +5,11 @@ namespace App\Filament\Resources\StudentHasClassesResource\Pages;
 use App\Filament\Resources\StudentHasClassesResource;
 use App\Models\Classroom;
 use Filament\Actions;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Builder;
+
+
 
 class ListStudentHasClasses extends ListRecords
 {
@@ -19,9 +21,10 @@ class ListStudentHasClasses extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
     public function getTabs(): array
-{
-    $tabs = [];
+    {
+        $tabs = [];
 
     $classrooms = Classroom::orderBy('name')->get();
 
@@ -33,5 +36,6 @@ class ListStudentHasClasses extends ListRecords
     }
 
     return $tabs;
-}
+    }
+
 }

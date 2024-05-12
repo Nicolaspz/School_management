@@ -47,10 +47,6 @@ class ClassDisciplinaResource extends Resource
              Select::make('grade_id') // Alterado de 'class' para 'classroom_id'
             ->options(grade::pluck('name','id'))
             ->label('Class'),
-            Select::make('teachers_id') // Alterado de 'class' para 'classroom_id'
-            ->options(Teacher::all()->pluck('name', 'id'))
-            ->label('Professor')
-            ->required(),
             Select::make('subject_id')
             ->options(Subject::all()->pluck('name', 'id'))
            ->label('Disciplina')
@@ -61,12 +57,12 @@ class ClassDisciplinaResource extends Resource
     {
         return $table
             ->columns([
+
                 TextColumn::make('class.name')
                 ->label('Classe'),
                 TextColumn::make('subjects.name')
                 ->label('Disciplina'),
-                TextColumn::make('teachers.name')
-                ->label('Professor')
+
             ])
             ->filters([
                 //

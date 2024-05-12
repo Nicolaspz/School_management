@@ -14,12 +14,20 @@ class classroomHasSubject extends Model
     protected $table = 'classroom_subject';
 
     public function subjects(){
-        return $this->belongsTo(Subject::class, 'subject_id', 'id');
+        return $this->belongsTo(Subject::class, 'subjects_id', 'id');
+    }
+    public function subject(){
+        return $this->belongsTo(Subject::class);
     }
     public function teachers(){
         return $this->belongsTo(Teacher::class, 'teachers_id', 'id');
     }
+
+
     public function class(){
         return $this->belongsTo(Classroom::class,'classroom_id', 'id');
     }
+
+
+
 }
