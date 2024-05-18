@@ -15,6 +15,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Term;
 use App\Models\User;
+use Closure;
 use Filament\Actions;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Repeater;
@@ -44,11 +45,12 @@ class CreateNota extends CreateRecord
                     $user = Auth::user();
                     if ($user->hasRole('professor')) {
                         $teacherId = $user->teacher->id;
-                        $gradeIds = ClassDisciplina::where('teachers_id', $teacherId)
-                        ->pluck('grade_id');
+                        //dd($teacherId);
+                        $gradeIds = classroomHasSubject::where('teachers_id', $teacherId)
+                        ->pluck('classroom_id');
                         $grade=$gradeIds[0];
                         //dd($grade);
-                    $curso= Classroom::whereIn('grade_id',$gradeIds)
+                    $curso= Classroom::whereIn('id',$gradeIds)
                         ->pluck('cursos_id');
                         //dd($curso);
                         return Curso::whereIn('id', $curso)
@@ -79,17 +81,37 @@ class CreateNota extends CreateRecord
                  }),
 
                 Select::make('classrooms')
-                ->options(Classroom::where('grade_id',$get('grade'))->pluck('name','id'))
+                ->options(function () use ($get) {
+                    $user = Auth::user();
+                    if ($user->hasRole('professor')) {
+                        $data = Classroom::whereIn('id', function ($query) use ($get){
+                            $query->select('classroom_id')
+                            ->from('classroom_subject')
+                            ->where('teachers_id', Auth::user()->teacher->id)
+                            ->pluck('classroom_id');
+                        })
+                        ->pluck('name', 'id');
+                     }
+                    else{
+                        $data = Classroom::all()->pluck('subject_id');
+
+                    }
+
+                    return $data;
+
+                     })
                 ->label('Turma')
                 ->required()
                 ->live(),
 
             Select::make('term')
             ->options(Term::all()->pluck('name','id'))
+            ->required()
             ->label('Trimestre')
             ->required(),
             Select::make('periode')
             ->searchable()
+            ->required()
             ->options(Periode::all()->pluck('name','id'))
             ->label('Ano Lectivo')
             ->live()
@@ -104,8 +126,7 @@ class CreateNota extends CreateRecord
                     if ($user->hasRole('professor')) {
                         $data = Subject::whereIn('id', function ($query) use ($get){
                             $query->select('subject_id')
-                            ->from('grade_subject')
-                            ->where('grade_id', $get('grade'))
+                            ->from('classroom_subject')
                             ->where('teachers_id', Auth::user()->teacher->id)
                             ->pluck('subject_id');
                         })
@@ -150,10 +171,55 @@ class CreateNota extends CreateRecord
                 ->label('Estudante')
                 ->required(),
                 TextInput::make('p1')
-                ->label('P1'),
+                ->rules([
+                    'numeric', // Garante que o input é numérico
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
+                        if ($numericValue < 6 || $numericValue > 20) {
+                            $fail("A nota deve ser de 6 a 20.");
+                        }
+                    },
+                ])
+                ->label('P1')
+                ->rules([
+                    'numeric', // Garante que o input é numérico
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
+                        if ($numericValue < 6 || $numericValue > 20) {
+                            $fail("A nota deve ser de 6 a 20.");
+                        }
+                    },
+                ]),
                 TextInput::make('p2')
-                ->label('P2'),
+                ->rules([
+                    'numeric', // Garante que o input é numérico
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
+                        if ($numericValue < 6 || $numericValue > 20) {
+                            $fail("A nota deve ser de 6 a 20.");
+                        }
+                    },
+                ])
+                ->label('P2')
+                ->rules([
+                    'numeric', // Garante que o input é numérico
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
+                        if ($numericValue < 6 || $numericValue > 20) {
+                            $fail("A nota deve ser de 6 a 20.");
+                        }
+                    },
+                ]),
                 TextInput::make('mac')
+                ->rules([
+                    'numeric', // Garante que o input é numérico
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
+                        if ($numericValue < 6 || $numericValue > 20) {
+                            $fail("A nota deve ser de 6 a 20.");
+                        }
+                    },
+                ])
                 ->label('Mac')
 
 
@@ -163,29 +229,45 @@ class CreateNota extends CreateRecord
     }
 
     public function save(){
+        $get = $this->form->getState();
+        $insert = [];
 
-        $get=$this->form->getState();
-        $insert=[];
         foreach($get['nilaistudents'] as $row){
-            array_push($insert,[
-                'class_id' =>$get['classrooms'],
-                'student_id'=> $row['student'],
-                'periode_id'=> $get['periode'],//terms_id
-                'terms_id'=> $get['term'],
-                'teacher_id'=>Auth::user()->id,
-                'subject_id'=> $get['subject_id'],
-                'p1'=> $row['p1'],
-                'p2'=> $row['p2'],
-                'p2'=> $row['p2'],
-                'mac'=>$row['mac'],
-            ]);
+            $existingRecord = Nota::where('student_id', $row['student'])
+                                  ->where('terms_id', $get['term'])
+                                  ->where('subject_id', $get['subject_id'])
+                                  ->where('periode_id', $get['periode'])
+                                  ->first();
 
-            if ($row['p1'] < 10 ) {
+            if ($existingRecord) {
+                // Atualizar registro existente
+                $existingRecord->update([
+                    'p1' => $row['p1'] ?? $existingRecord->p1, // atualiza p1 se for fornecido, caso contrário mantém o existente
+                    'p2' => $row['p2'] ?? $existingRecord->p2, // o mesmo para p2
+                    'mac' => $row['mac'] ?? $existingRecord->mac, // o mesmo para mac
+                ]);
+            } else {
+                // Preparar para nova inserção
+                $insert[] = [
+                    'class_id' => $get['classrooms'],
+                    'student_id' => $row['student'],
+                    'periode_id' => $get['periode'], // terms_id
+                    'terms_id' => $get['term'],
+                    'teacher_id' => Auth::user()->id,
+                    'subject_id' => $get['subject_id'],
+                    'p1' => $row['p1'],
+                    'p2' => $row['p2'],
+                    'mac' => $row['mac'],
+                ];
+            }
+
+            // Verificar se p1 está abaixo de 10 e notificar o aluno
+            if ($row['p1'] < 10) {
                 $studentUserId = Student::where('id', $row['student'])->value('user_id');
                 $studentUser = User::find($studentUserId);
 
                 if ($studentUser) {
-                    $notification = Notification::make()
+                    Notification::make()
                         ->title('Nota Baixa')
                         ->success()
                         ->body('Sua nota está abaixo de 10.')
@@ -193,10 +275,12 @@ class CreateNota extends CreateRecord
                         ->send();
                 }
             }
-
         }
 
-        Nota::insert($insert);
+        if (!empty($insert)) {
+            Nota::insert($insert);
+        }
+
         return redirect()->to('admin/notas');
     }
 }

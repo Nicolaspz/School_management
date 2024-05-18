@@ -40,23 +40,25 @@ class CreateFalta extends CreateRecord
             ->schema( fn (Get $get): array =>[
 
                 Select::make('classrooms')
-                ->options(function () {
-                    $user = Auth::user();  // Pega o usuário logado
-                    if ($user->hasRole('professor')) {  // Verifica se o usuário tem o papel de professor
-                        $teacherId = $user->teacher->id;  // Pega o ID do professor logado
-                        $gradeIds = ClassDisciplina::where('teachers_id', $teacherId)  // Filtra class_disciplina pelo ID do professor
-                        ->pluck('grade_id');  // Obtém os IDs das classes
-                       // dd($gradeIds);
-                    // Obter as turmas (classrooms) que estão associadas a essas classes
-                    return Classroom::whereIn('grades_id', $gradeIds)  // Obtém as salas de aula que correspondem aos IDs filtrados
-                        ->pluck('name', 'id');  // Prepara a lista de opções para o Select
-                    } else {
-                        // Se não é professor, pode retornar todas as salas de aula ou uma lista vazia
-                        return Classroom::pluck('name', 'id');  // Retorna todas as salas de aula
-                        // ou
-                        // return [];  // Retorna uma lista vazia
+                ->options(function () use ($get) {
+                    $user = Auth::user();
+                    if ($user->hasRole('professor')) {
+                        $data = Classroom::whereIn('id', function ($query) use ($get){
+                            $query->select('classroom_id')
+                            ->from('classroom_subject')
+                            ->where('teachers_id', Auth::user()->teacher->id)
+                            ->pluck('classroom_id');
+                        })
+                        ->pluck('name', 'id');
+                     }
+                    else{
+                        $data = Classroom::all()->pluck('subject_id');
+
                     }
-                })
+
+                    return $data;
+
+                     })
                 ->label('Turma')
                 ->required()
                 ->live()
@@ -93,6 +95,7 @@ class CreateFalta extends CreateRecord
                 Checkbox::make('falta')
                 ->label('falta')
                 ->required()
+                ->default(true)
 
             ])->columns(2)
            ])
@@ -102,7 +105,7 @@ class CreateFalta extends CreateRecord
     public function save(){
                 $get=$this->form->getState();
                 $get['aulas'];
-
+                $user = Auth::user();
                 $insert = [];
                 //dd($get['aulas']);
         // Itera sobre cada estudante listado no repeater 'nilaistudents'
@@ -113,6 +116,7 @@ class CreateFalta extends CreateRecord
                 'aulas_id' => $get['aulas'],  // ID da aula selecionada
                 'students_id' => $row['student'],  // ID do estudante
                 'falta' => $row['falta'],  // Estado da falta (presença/ausência)
+                'teacher_id' => $user->teacher->id,
             ]);
         }
 

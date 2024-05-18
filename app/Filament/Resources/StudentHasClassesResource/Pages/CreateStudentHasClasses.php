@@ -41,6 +41,8 @@ class CreateStudentHasClasses extends CreateRecord
                         $set('grade', null);
 
                     }),
+
+
                     Select::make('grade')
                     ->options(grade::where('cursos_id',$get('curso'))->pluck('name','id'))
                     ->label('classe')
@@ -68,7 +70,7 @@ class CreateStudentHasClasses extends CreateRecord
                         ->options(
                             Student::whereNotIn('id', function($query) {
                                 $query->select('students_id')
-                                      ->from('student_has_classes');
+                                ->from('student_has_classes');
                             })->pluck('name', 'id')
                         )
                         ->columnSpan(3)

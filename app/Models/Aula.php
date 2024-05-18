@@ -26,6 +26,7 @@ class Aula extends Model
     {
         parent::boot();
 
+
         static::creating(function ($aula) {
             // Certifica-se de que o usuário está autenticado e que é um professor
             if (auth()->check() && auth()->user()->teacher) {

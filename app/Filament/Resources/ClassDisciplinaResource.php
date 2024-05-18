@@ -17,6 +17,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -65,7 +66,15 @@ class ClassDisciplinaResource extends Resource
 
             ])
             ->filters([
-                //
+               /* SelectFilter::make('grade_id') // Alterado para grade_id para clareza
+                ->label('Classe')
+                ->options(Grade::all()->pluck('name', 'id'))
+                ->query(function ($query, $value) {
+                    // Ajuste para filtrar corretamente por grade_id em uma relação many-to-many
+                    return $query->whereHas('grade', function ($query) use ($value) {
+                        $query->where('id', $value);
+                    });
+                }),*/
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

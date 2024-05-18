@@ -10,11 +10,14 @@ use App\Models\Nota;
 use App\Models\Periode;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\Term;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -46,13 +49,49 @@ class NotaResource extends Resource
                 Select::make('subject_id')
                 ->options(Subject::all()->pluck('name','id'))
                 ->label('Discipplina'),
-                Select::make('category_notas_id')
-                ->options(CategoryNilai::all()->pluck('name','id'))
-                ->label('categoria da nota'),
+                Select::make('term')
+                ->options(Term::all()->pluck('name','id'))
+                ->label('Trimestre')
+                ->required(),
                 Select::make('student_id')
+                ->required()
                 ->options(Student::all()->pluck('name','id'))
                 ->label('Estudante'),
-                TextInput::make('nota')
+                TextInput::make('p1')
+                ->label('P1')
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        if ($get('p1') < 6 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 6 a 20");
+                        }
+                    },
+                ]),
+                TextInput::make('p2')
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        if ($get('p1') < 6 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 6 a 20");
+                        }
+                    },
+                ])
+                ->label('P2')
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        if ($get('p1') < 6 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 6 a 20");
+                        }
+                    },
+                ]),
+                TextInput::make('mac')
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        if ($get('p1') < 6 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 6 a 20");
+                        }
+                    },
+                ])
+                ->label('Mac')
+
                 ])->columns(3)
             ]);
     }
@@ -62,8 +101,9 @@ class NotaResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('student.name')
-                ->label('Estudante'),
+                ->label('Estudante')->searchable(),
                 TextColumn::make('subject.name')
+                ->searchable()
                 ->label('Disciplina'),
                 TextColumn::make('p1')
                 ->label('P1'),

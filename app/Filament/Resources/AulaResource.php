@@ -8,12 +8,14 @@ use App\Filament\Resources\FaltaResource\RelationManagers\FaltaResourceRelationM
 use App\Models\Aula;
 use App\Models\Classroom;
 use App\Models\classroomHasSubject;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -34,11 +36,20 @@ class AulaResource extends Resource
         return $form
             ->schema([
                 TextInput::make('sumario')
-                ->label('Sumário'),
+                ->label('Sumário')
+                ->required(),
                 Textarea::make('title')
                 ->label('Assunto'),
                 DatePicker::make('data')
-                ->label('data'),
+                ->label('data')
+                ->required()
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        if ($value > now()->toDateString()) {
+                            $fail("A data não pode ser futura.");
+                        }
+                    },
+                ]),
                 Select::make('classrooms_id')
                 ->options(function () {
                     $user = Auth::user();  // Pega o usuário logado
@@ -57,6 +68,7 @@ class AulaResource extends Resource
                     }
                 })
                 ->label('Turma')
+                ->required()
             ]);
     }
 

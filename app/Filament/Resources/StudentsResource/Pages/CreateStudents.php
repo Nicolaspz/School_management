@@ -10,6 +10,8 @@ use App\Models\Periode;
 use App\Models\Student;
 use App\Models\StudentHasClasses;
 use App\Models\User;
+use App\Rules\dataNiver;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -23,6 +25,7 @@ use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+
 
 class CreateStudents extends CreateRecord
 {
@@ -58,8 +61,9 @@ class CreateStudents extends CreateRecord
                      "Female"])->required()
                 ->hidden(),
                 DatePicker::make('birthday')
+                ->required()
+                ->rules([new dataNiver()])
                 ->label('Aniversario'),
-
                 Select::make('religion')
                 ->options([
                     "Islam",

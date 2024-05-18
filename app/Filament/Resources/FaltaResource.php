@@ -65,6 +65,7 @@ class FaltaResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
@@ -84,5 +85,28 @@ class FaltaResource extends Resource
             'create' => Pages\CreateFalta::route('/create'),
             'edit' => Pages\EditFalta::route('/{record}/edit'),
         ];
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // Verifica o role do usuário
+        $user = Auth::user();
+        if ($user->hasRole('estudante')) {
+            // Se o usuário é um estudante, filtra para mostrar apenas as notas dele
+            $query->whereHas('student.user', function ($q) use ($user) {
+                $q->where('id', $user->id);
+            });
+        } elseif ($user->hasRole('professor')) {
+            $teacherId = $user->teacher->id;
+            //git statusdd($teacherId);
+            $query->where('teacher_id', $teacherId);
+        }
+        elseif ($user->hasRole('super_admin')){
+
+        }
+
+
+        return $query;
     }
 }
