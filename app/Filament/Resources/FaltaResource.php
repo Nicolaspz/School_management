@@ -34,14 +34,26 @@ class FaltaResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-               TextColumn::make('students.name'),
+
+        $user = Auth::user(); // Supondo que o papel do usuário está acessível através de Auth::user()->role
+
+        $columns = [];
+
+        if ($user->hasRole('professor') ||  $user->hasRole('super_admin')) {
+            $columns[] = TextColumn::make('students.name')
+                ->label('Estudante')
+                ->searchable();
+        }
+
+        $columns = array_merge($columns, [
+                TextColumn::make('aulas.title')->label('Assunto'),
+               TextColumn::make('classrooms.name'),
                IconColumn::make('falta')
                ->boolean(),
+        ]);
 
-
-            ])
+        return $table
+            ->columns($columns)
             ->filters([
                /*SelectFilter::make('aulas_id')
                     ->label('Aula')
@@ -94,7 +106,7 @@ class FaltaResource extends Resource
         $user = Auth::user();
         if ($user->hasRole('estudante')) {
             // Se o usuário é um estudante, filtra para mostrar apenas as notas dele
-            $query->whereHas('student.user', function ($q) use ($user) {
+            $query->whereHas('students.user', function ($q) use ($user) {
                 $q->where('id', $user->id);
             });
         } elseif ($user->hasRole('professor')) {

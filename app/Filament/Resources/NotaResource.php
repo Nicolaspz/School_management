@@ -98,31 +98,41 @@ class NotaResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('student.name')
-                ->label('Estudante')->searchable(),
-                TextColumn::make('subject.name')
+        $user = Auth::user(); // Supondo que o papel do usuário está acessível através de Auth::user()->role
+
+        $columns = [];
+
+        if ($user->hasRole('professor') ||  $user->hasRole('super_admin')) {
+            $columns[] = TextColumn::make('student.name')
+                ->label('Estudante')
+                ->searchable();
+        }
+
+        $columns = array_merge($columns, [
+            TextColumn::make('subject.name')
                 ->searchable()
                 ->label('Disciplina'),
-                TextColumn::make('p1')
+            TextColumn::make('p1')
                 ->label('P1'),
-                TextColumn::make('p2')
+            TextColumn::make('p2')
                 ->label('P2'),
-                TextColumn::make('mac')
+            TextColumn::make('mac')
                 ->label('MAC'),
-                TextColumn::make('mt')
+            TextColumn::make('mt')
                 ->label('MT'),
-                /*TextColumn::make('periode.name')
-                ->label('Ano Lectivo')*/
-            ])
+            // TextColumn::make('periode.name')
+            //     ->label('Ano Lectivo')
+        ]);
+
+        return $table
+            ->columns($columns)
             ->filters([
-               /* SelectFilter::make('class_id')
-                ->options(
-                    Classroom::whereHas('students', function($query){
-                        $query->where('user_id', Auth::user()->id);
-                    })->groupBy('name', 'id')->pluck('name','id')
-                )*/
+                // SelectFilter::make('class_id')
+                //     ->options(
+                //         Classroom::whereHas('students', function($query){
+                //             $query->where('user_id', Auth::user()->id);
+                //         })->groupBy('name', 'id')->pluck('name','id')
+                //     )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -133,6 +143,7 @@ class NotaResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

@@ -261,7 +261,7 @@ class CreateNota extends CreateRecord
                 ];
             }
 
-            // Verificar se p1 está abaixo de 10 e notificar o aluno
+
             if ($row['p1'] < 10) {
                 $studentUserId = Student::where('id', $row['student'])->value('user_id');
                 $studentUser = User::find($studentUserId);
@@ -270,7 +270,7 @@ class CreateNota extends CreateRecord
                     Notification::make()
                         ->title('Nota Baixa')
                         ->success()
-                        ->body('Sua nota está abaixo de 10.')
+                        ->body('Sua nota de')
                         ->sendToDatabase($studentUser)
                         ->send();
                 }

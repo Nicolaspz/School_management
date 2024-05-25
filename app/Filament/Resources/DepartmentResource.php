@@ -27,9 +27,10 @@ class DepartmentResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name_department')
-                ->live()
-                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
-                TextInput::make('slug'),
+                ->live(),
+                //->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', \Str::slug($state))),
+                TextInput::make('slug')
+                ->required(),
                 TextInput::make('description'),
             ]);
     }

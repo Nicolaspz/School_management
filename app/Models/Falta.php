@@ -18,4 +18,8 @@ class Falta extends Model
         return $this->belongsTo(Aula::class, 'aulas_id', 'id');
     }
 
+    public function classrooms(){
+        return $this->belongsTo(Classroom::class, 'classrooms_id', 'id');
+    }
+
 }

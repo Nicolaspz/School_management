@@ -150,5 +150,5 @@ class CreateTeacher extends CreateRecord
             'classroom_id'=> $get['classrooms'],
         ]);
         return redirect()->to('admin/teachers');
-}
+        }
 }
