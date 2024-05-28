@@ -63,21 +63,12 @@ class StudentsResource extends Resource
                 ->required(),
                 Select::make('gender')
                 ->options([
-                    "Male",
-                     "Female"
-
-                ]),
+                    "Masculino",
+                     "Femenino"
+                    ])->label('género'),
                 DatePicker::make('birthday')
                 ->label('Aniversario'),
-                Select::make('religion')
-                ->options([
-                    "Islam",
-                     "Katolik",
-                     "Protestan",
-                      "Hindu",
-                      "Buddha",
-                      "Khonghucu"
-                ]),
+
                 TextInput::make('contact')
                     ->label('Contacto'),
                 FileUpload::make('profile')
@@ -93,14 +84,16 @@ class StudentsResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nis')
-                    ->label('NIS'),
-                TextColumn::make('name'),
+                    ->label('NIS')
+                    ->searchable(),
+                TextColumn::make('name')
+                ->searchable(),
                 //TextColumn::make('gender'),
                 TextColumn::make('birthday')
                 ->label('Aniversario'),
-                //TextColumn::make('religion'),
-
-                //TextColumn::make('contact')->label('Contacto'),
+                TextColumn::make('gender')
+                ->label('género'),
+                TextColumn::make('contact')->label('Contacto'),
                 ImageColumn::make('profile'),
                 TextColumn::make('status')
                 ->formatStateUsing(fn (string $state): string => ucwords("$state"))
@@ -124,6 +117,7 @@ class StudentsResource extends Resource
                         ->label('Status')
                         ->options(['accept'=>'Accept','off'=> 'Off','move'=>'Move','grade'=>'Grade'])
                         ->required()
+
                     ])
                     ->action(function (Collection $records, array $data){
                         return $records->each(function ($records) use ($data){
@@ -185,17 +179,18 @@ class StudentsResource extends Resource
                         ->schema([
                             Group::make([
                                 TextEntry::make('name')
-                                ->label('Nome'),
+                                ->label('Nome:'),
                                 TextEntry::make('nis')
-                                ->label('Nº de Processo'),
+                                ->label('Nº de Processo:'),
+                                TextEntry::make('bi')
+                                ->label('BI:'),
                                 TextEntry::make('birthday')
-                                ->label('Data de Nascimento')
+                                ->label('Data de Nascimento:')
                             ])
                             ->inlineLabel()
-                            ->columns(1),
+                            ->columns(2),
                             Group::make([
-                                TextEntry::make('religion')
-                                ->label('Religião'),
+
                                 TextEntry::make('contact')
                                 ->label('Contacto'),
                                 TextEntry::make('status')

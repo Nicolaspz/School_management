@@ -4,14 +4,23 @@ namespace App\Filament\Widgets;
 
 use App\Models\Student;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StudentCountByClassroomChart extends ChartWidget
 {
     protected static ?string $heading = 'Quantidade de Estudantes por Turma';
 
+
+
     protected function getData(): array {
-        $data = DB::table('student_has_classes')
+
+        $user = Auth::user();
+        $role=$user->getRoleNames()[0];
+         //dd($role=="super_admin");
+        if ($role=="super_admin"){
+
+            $data = DB::table('student_has_classes')
             ->join('classrooms', 'student_has_classes.classrooms_id', '=', 'classrooms.id')
             ->select('classrooms.name as classroom_name', DB::raw('COUNT(student_has_classes.students_id) as student_count'))
             ->where('student_has_classes.is_open', 1)  // Considera apenas as classes que estão abertas
@@ -19,8 +28,8 @@ class StudentCountByClassroomChart extends ChartWidget
             ->orderBy('student_count', 'desc')
             ->get();
 
-        $labels = $data->pluck('classroom_name')->toArray();
-        $values = $data->pluck('student_count')->toArray();
+            $labels = $data->pluck('classroom_name')->toArray();
+            $values = $data->pluck('student_count')->toArray();
 
         return [
             'labels' => $labels,
@@ -35,9 +44,19 @@ class StudentCountByClassroomChart extends ChartWidget
             ]
         ];
     }
+    else{
+        return [];
 
-    protected function getType(): string
+    }
+}
+
+        protected function getType(): string
     {
+
         return 'bar'; // Gráfico de barras
     }
+
+
+
+
 }

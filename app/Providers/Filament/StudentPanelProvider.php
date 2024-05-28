@@ -24,7 +24,7 @@ class StudentPanelProvider extends PanelProvider
     {
         return $panel
             ->id('student')
-            ->path('student')
+            ->path('academic')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -52,6 +52,9 @@ class StudentPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+
+            ->databaseNotifications();
     }
 }

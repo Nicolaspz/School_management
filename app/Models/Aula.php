@@ -21,6 +21,9 @@ class Aula extends Model
     public function teachers(){
         return $this->belongsTo(Teacher::class,'teachers_id','id');
     }
+    public function subjects(){
+        return $this->belongsTo(Subject::class,'subjects_id','id');
+    }
 
     protected static function boot()
     {

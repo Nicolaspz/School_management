@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Student\Resources\NotaResource\Pages;
+namespace App\Filament\Student\Resources\AulaResource\Pages;
 
-use App\Filament\Student\Resources\NotaResource;
+use App\Filament\Student\Resources\AulaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListNotas extends ListRecords
+class ListAulas extends ListRecords
 {
-    protected static string $resource = NotaResource::class;
+    protected static string $resource = AulaResource::class;
 
     protected function getHeaderActions(): array
     {

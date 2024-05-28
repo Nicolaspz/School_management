@@ -58,8 +58,7 @@ class CreateStudents extends CreateRecord
                 Select::make('gender')
                 ->options([
                     "Male",
-                     "Female"])->required()
-                ->hidden(),
+                     "Female"])->required(),
                 DatePicker::make('birthday')
                 ->required()
                 ->rules([new dataNiver()])
@@ -78,7 +77,10 @@ class CreateStudents extends CreateRecord
               ,
                 TextInput::make('contact')
                     ->label('Contacto')
-                    ->hidden(),
+                    ->required(),
+                    TextInput::make('bi')
+                    ->label('BI')
+                    ->required(),
                 FileUpload::make('profile')
 
                 ->disk('public')

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Student\Resources;
 
 use App\Filament\Resources\FaltaResource\Pages;
 use App\Filament\Resources\FaltaResource\RelationManagers;
@@ -8,13 +8,11 @@ use App\Models\Aula;
 use App\Models\Falta;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -33,7 +31,7 @@ class FaltaResource extends Resource
     {
         return $form
             ->schema([
-               //
+                //
             ]);
     }
 
@@ -55,8 +53,7 @@ class FaltaResource extends Resource
                TextColumn::make('aulas.subjects.name')
                ->label('Disciplina'),
                //TextColumn::make('created_at')->label('Data')->dateTime('d/m/Y H:i:s'),
-               IconColumn::make('justify')
-               ->label('Justificada')
+               IconColumn::make('falta')
                ->boolean(),
         ]);
 
@@ -145,4 +142,5 @@ class FaltaResource extends Resource
 
         return $query;
     }
+
 }

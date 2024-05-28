@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable //implements FilamentUser
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
@@ -92,21 +92,28 @@ class User extends Authenticatable //implements FilamentUser
         return $this->belongsToMany(Team::class);
     }*/
 
-   /* public function canAccessPanel(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         $user= Auth::user();
         $roles=$user->getRoleNames();
+        //dd($roles);
 
-        if($panel->getId() === 'admin' && $roles->contains('admin') || $roles->contains('professor') ){
+        if($panel->getId() === 'admin' && $roles->contains('super_admin')){
             return true;
         }
         else if($panel->getId() === 'student' && $roles->contains('estudante')){
+            return true;
+        }
+        else if($panel->getId() === 'student' &&  $roles->contains('professor') ){
+            return true;
+        }
+        else if($panel->getId() === 'student' &&  $roles->contains('psicologo') ){
             return true;
         }
         else {
             return false;
         }
 
-    }*/
+    }
 
 }

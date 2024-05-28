@@ -101,10 +101,12 @@ class CreateNota extends CreateRecord
 
                      })
                 ->label('Turma')
-                ->required()
-                ->live(),
+                ->live()
+                ->afterStateUpdated(function (Set $set){
+                   $set('subject_id', null);
+                 }),
 
-            Select::make('term')
+            Select::make('terms_id')
             ->options(Term::all()->pluck('name','id'))
             ->required()
             ->label('Trimestre')
@@ -128,6 +130,7 @@ class CreateNota extends CreateRecord
                             $query->select('subject_id')
                             ->from('classroom_subject')
                             ->where('teachers_id', Auth::user()->teacher->id)
+                            ->where('classroom_id', $get('classrooms'))
                             ->pluck('subject_id');
                         })
                         ->pluck('name', 'id');
@@ -175,8 +178,8 @@ class CreateNota extends CreateRecord
                     'numeric', // Garante que o input é numérico
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                         $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
-                        if ($numericValue < 6 || $numericValue > 20) {
-                            $fail("A nota deve ser de 6 a 20.");
+                        if ($numericValue < 0 || $numericValue > 20) {
+                            $fail("A nota deve ser de 0 a 20.");
                         }
                     },
                 ])
@@ -185,8 +188,8 @@ class CreateNota extends CreateRecord
                     'numeric', // Garante que o input é numérico
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                         $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
-                        if ($numericValue < 6 || $numericValue > 20) {
-                            $fail("A nota deve ser de 6 a 20.");
+                        if ($numericValue < 0 || $numericValue > 20) {
+                            $fail("A nota deve ser de 0 a 20.");
                         }
                     },
                 ]),
@@ -195,8 +198,8 @@ class CreateNota extends CreateRecord
                     'numeric', // Garante que o input é numérico
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                         $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
-                        if ($numericValue < 6 || $numericValue > 20) {
-                            $fail("A nota deve ser de 6 a 20.");
+                        if ($numericValue < 0 || $numericValue > 20) {
+                            $fail("A nota deve ser de 0 a 20.");
                         }
                     },
                 ])
@@ -205,8 +208,8 @@ class CreateNota extends CreateRecord
                     'numeric', // Garante que o input é numérico
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                         $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
-                        if ($numericValue < 6 || $numericValue > 20) {
-                            $fail("A nota deve ser de 6 a 20.");
+                        if ($numericValue < 0 || $numericValue > 20) {
+                            $fail("A nota deve ser de 0 a 20.");
                         }
                     },
                 ]),
@@ -215,8 +218,8 @@ class CreateNota extends CreateRecord
                     'numeric', // Garante que o input é numérico
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                         $numericValue = floatval($value); // Converte o valor para float para garantir a comparação numérica
-                        if ($numericValue < 6 || $numericValue > 20) {
-                            $fail("A nota deve ser de 6 a 20.");
+                        if ($numericValue < 0 || $numericValue > 20) {
+                            $fail("A nota deve ser de 0 a 20.");
                         }
                     },
                 ])
@@ -234,33 +237,38 @@ class CreateNota extends CreateRecord
 
         foreach($get['nilaistudents'] as $row){
             $existingRecord = Nota::where('student_id', $row['student'])
-                                  ->where('terms_id', $get['term'])
+                                  ->where('terms_id', $get['terms_id'])
                                   ->where('subject_id', $get['subject_id'])
                                   ->where('periode_id', $get['periode'])
                                   ->first();
 
+            // Calcular a média das notas
+            $notas = collect([$row['p1'], $row['p2'], $row['mac']])->filter()->values();
+            $media = $notas->sum() / 3; // Calcula a média apenas dos valores não nulos
+
             if ($existingRecord) {
                 // Atualizar registro existente
                 $existingRecord->update([
-                    'p1' => $row['p1'] ?? $existingRecord->p1, // atualiza p1 se for fornecido, caso contrário mantém o existente
-                    'p2' => $row['p2'] ?? $existingRecord->p2, // o mesmo para p2
-                    'mac' => $row['mac'] ?? $existingRecord->mac, // o mesmo para mac
+                    'p1' => $row['p1'] ?? $existingRecord->p1,
+                    'p2' => $row['p2'] ?? $existingRecord->p2,
+                    'mac' => $row['mac'] ?? $existingRecord->mac,
+                    'mt' => $media  // Atualiza a média
                 ]);
             } else {
                 // Preparar para nova inserção
                 $insert[] = [
                     'class_id' => $get['classrooms'],
                     'student_id' => $row['student'],
-                    'periode_id' => $get['periode'], // terms_id
-                    'terms_id' => $get['term'],
+                    'periode_id' => $get['periode'],
+                    'terms_id' => $get['terms_id'],
                     'teacher_id' => Auth::user()->id,
                     'subject_id' => $get['subject_id'],
                     'p1' => $row['p1'],
                     'p2' => $row['p2'],
                     'mac' => $row['mac'],
+                    'mt' => $media  // Define a média na inserção
                 ];
             }
-
 
             if ($row['p1'] < 10) {
                 $studentUserId = Student::where('id', $row['student'])->value('user_id');
@@ -283,4 +291,5 @@ class CreateNota extends CreateRecord
 
         return redirect()->to('admin/notas');
     }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Student\Resources;
 
 use App\Filament\Resources\AulaResource\Pages;
 use App\Filament\Resources\AulaResource\RelationManagers;
@@ -109,13 +109,17 @@ class AulaResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('sumario')
-                ->label('Sumário'),
+                ->label('Sumário')
+                ->searchable(),
                 TextColumn::make('title')
-                ->label('Assunto'),
+                ->label('Assunto')
+                ->searchable(),
                 TextColumn::make('data')
-                ->label('data'),
+                ->label('data')
+                ->searchable(),
                 TextColumn::make('classroom.name')
-                   ->label('Turma'),
+                   ->label('Turma')
+                   ->searchable(),
 
             ])
             ->filters([

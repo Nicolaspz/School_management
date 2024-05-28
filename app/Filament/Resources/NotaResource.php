@@ -49,7 +49,7 @@ class NotaResource extends Resource
                 Select::make('subject_id')
                 ->options(Subject::all()->pluck('name','id'))
                 ->label('Discipplina'),
-                Select::make('term')
+                Select::make('terms_id')
                 ->options(Term::all()->pluck('name','id'))
                 ->label('Trimestre')
                 ->required(),
@@ -61,32 +61,32 @@ class NotaResource extends Resource
                 ->label('P1')
                 ->rules([
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                        if ($get('p1') < 6 || $get('p1') > 20) {
-                            $fail("A nota deve ser de 6 a 20");
+                        if ($get('p1') < 0 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 0 a 20");
                         }
                     },
                 ]),
                 TextInput::make('p2')
                 ->rules([
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                        if ($get('p1') < 6 || $get('p1') > 20) {
-                            $fail("A nota deve ser de 6 a 20");
+                        if ($get('p1') < 0 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 0 a 20");
                         }
                     },
                 ])
                 ->label('P2')
                 ->rules([
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                        if ($get('p1') < 6 || $get('p1') > 20) {
-                            $fail("A nota deve ser de 6 a 20");
+                        if ($get('p1') < 0 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 0 a 20");
                         }
                     },
                 ]),
                 TextInput::make('mac')
                 ->rules([
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                        if ($get('p1') < 6 || $get('p1') > 20) {
-                            $fail("A nota deve ser de 6 a 20");
+                        if ($get('p1') < 0 || $get('p1') > 20) {
+                            $fail("A nota deve ser de 0 a 20");
                         }
                     },
                 ])
